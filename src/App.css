@@ -1,0 +1,63 @@
+.game {
+  width: 100%;
+}
+.guess {
+  width: 72%;
+  display: grid;
+  grid-template-columns: 100%;
+  grid-gap: 5px;
+  justify-content: center;
+  margin: auto;
+  margin-bottom: 50px;
+}
+.guess-row {
+  display: grid;
+  grid-template-columns: repeat(5, 50px);
+  grid-gap: 5px;
+}
+.guess-column {
+  border: 1px solid black;
+  height: 30px;
+  padding: 5px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.letter {
+  width: 60%;
+  margin: auto;
+  padding-left: 8px;
+}
+.keyboard {
+  display: grid;
+  grid-template-columns: 100%;
+  grid-gap: 10px;
+}
+.key1 {
+  display: grid;
+  grid-template-columns: repeat(10, 8%);
+  justify-content: center;
+  grid-gap: 7px;
+}
+.key2 {
+  display: grid;
+  grid-template-columns: repeat(9, 8%);
+  justify-content: center;
+  grid-gap: 7px;
+}
+.key3 {
+  display: grid;
+  grid-template-columns: 18% repeat(7, 8%) 12%;
+  justify-content: center;
+  grid-gap: 7px;
+}
+.keys {
+  background-color: rgb(216, 216, 216);
+}
+.enter,
+.del {
+  background-color: rgb(216, 216, 216);
+}
+p {
+  font-size: 16px;
+  padding-left: 9px;
+}
