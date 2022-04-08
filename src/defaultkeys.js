@@ -1,34 +1,34 @@
 export const keyone = [
-  { letter: "Q", number: 0 },
-  { letter: "W", number: 0 },
-  { letter: "E", number: 0 },
-  { letter: "R", number: 0 },
-  { letter: "T", number: 0 },
-  { letter: "Y", number: 0 },
-  { letter: "U", number: 0 },
-  { letter: "I", number: 0 },
-  { letter: "0", number: 0 },
-  { letter: "P", number: 0 }
+  { letter: "Q", color: "#d8d8d8" },
+  { letter: "W", color: "#d8d8d8" },
+  { letter: "E", color: "#d8d8d8" },
+  { letter: "R", color: "#d8d8d8" },
+  { letter: "T", color: "#d8d8d8" },
+  { letter: "Y", color: "#d8d8d8" },
+  { letter: "U", color: "#d8d8d8" },
+  { letter: "I", color: "#d8d8d8" },
+  { letter: "O", color: "#d8d8d8" },
+  { letter: "P", color: "#d8d8d8" }
 ]
 
 export const keytwo = [
-  { letter: "A", number: 0 },
-  { letter: "S", number: 0 },
-  { letter: "D", number: 0 },
-  { letter: "F", number: 0 },
-  { letter: "G", number: 0 },
-  { letter: "H", number: 0 },
-  { letter: "J", number: 0 },
-  { letter: "K", number: 0 },
-  { letter: "L", number: 0 }
+  { letter: "A", color: "#d8d8d8" },
+  { letter: "S", color: "#d8d8d8" },
+  { letter: "D", color: "#d8d8d8" },
+  { letter: "F", color: "#d8d8d8" },
+  { letter: "G", color: "#d8d8d8" },
+  { letter: "H", color: "#d8d8d8" },
+  { letter: "J", color: "#d8d8d8" },
+  { letter: "K", color: "#d8d8d8" },
+  { letter: "L", color: "#d8d8d8" }
 ]
 
 export const keythree = [
-  { letter: "Z", number: 0 },
-  { letter: "X", number: 0 },
-  { letter: "C", number: 0 },
-  { letter: "V", number: 0 },
-  { letter: "B", number: 0 },
-  { letter: "N", number: 0 },
-  { letter: "M", number: 0 }
+  { letter: "Z", color: "#d8d8d8" },
+  { letter: "X", color: "#d8d8d8" },
+  { letter: "C", color: "#d8d8d8" },
+  { letter: "V", color: "#d8d8d8" },
+  { letter: "B", color: "#d8d8d8" },
+  { letter: "N", color: "#d8d8d8" },
+  { letter: "M", color: "#d8d8d8" }
 ]
