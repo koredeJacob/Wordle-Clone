@@ -1,34 +1,33 @@
-import React, { createContext, useEffect, useState } from "react"
+import React, { createContext, useCallback, useEffect, useState } from "react"
 import { wordbank } from "./words"
 import { defaultboard } from "./defaultboard"
 import { keyone, keytwo, keythree } from "./defaultkeys"
+import { elementAcceptingRef } from "@mui/utils"
 
 const loadJSON = (key) => key && JSON.parse(localStorage.getItem(key))
 export const AppContext = createContext()
 const wordset = new Set(wordbank)
 
 const AppProvider = ({ children }) => {
-  localStorage.clear()
   const [Word, setWord] = useState(localStorage.getItem("word"))
   const [Board, setBoard] = useState(loadJSON("board"))
-  const [Index, setIndex] = useState({ row: 0, column: -1 })
+  const [Index, setIndex] = useState(loadJSON("index"))
   const [Invalidword, setInvalidword] = useState(false)
   const [Gameover, setGameover] = useState(false)
   const [Playagain, setPlayagain] = useState(false)
   const [Result, setResult] = useState(false)
-  const [Key1, setKey1] = useState(keyone)
-  const [Key2, setKey2] = useState(keytwo)
-  const [Key3, setKey3] = useState(keythree)
-
-  let { row, column } = Index
-
+  const [Key1, setKey1] = useState(loadJSON("keyone"))
+  const [Key2, setKey2] = useState(loadJSON("keytwo"))
+  const [Key3, setKey3] = useState(loadJSON("keythree"))
+  let row, column
+  if (Index) ({ row, column } = Index)
+  console.log(row)
   const clickedletter = (letter) => {
     if (!Gameover) {
       if (row <= 5 && column < 4) {
         Board[row][column + 1].letter = letter
         setIndex({ row, column: column + 1 })
-        localStorage.setItem("board", JSON.stringify(Board))
-        setBoard(JSON.parse(localStorage.getItem("board")))
+        setBoard(Board)
       }
     }
   }
@@ -46,11 +45,17 @@ const AppProvider = ({ children }) => {
         if (wordset.has(guess)) {
           await checkGuess(Board[row])
           colorkeys(guess)
-          setKey1(Key1)
-          setKey2(Key2)
-          setKey3(Key3)
           endGame(guess)
-          setIndex({ row: row + 1, column: -1 })
+          localStorage.setItem("index", JSON.stringify({ row: row + 1, column: -1 }))
+          setIndex(JSON.parse(localStorage.getItem("index")))
+          localStorage.setItem("board", JSON.stringify(Board))
+          setBoard(JSON.parse(localStorage.getItem("board")))
+          localStorage.setItem("keyone", JSON.stringify(Key1))
+          localStorage.setItem("keytwo", JSON.stringify(Key2))
+          localStorage.setItem("keythree", JSON.stringify(Key3))
+          setKey1(JSON.parse(localStorage.getItem("keyone")))
+          setKey2(JSON.parse(localStorage.getItem("keytwo")))
+          setKey3(JSON.parse(localStorage.getItem("keythree")))
         } else {
           setInvalidword(true)
           setTimeout(() => setInvalidword(false), 1500)
@@ -64,8 +69,7 @@ const AppProvider = ({ children }) => {
       if (row <= 5 && column >= 0) {
         Board[row][column].letter = ""
         setIndex({ row, column: column - 1 })
-        localStorage.setItem("board", JSON.stringify(Board))
-        setBoard(JSON.parse(localStorage.getItem("board")))
+        setBoard(Board)
       }
     }
   }
@@ -105,6 +109,27 @@ const AppProvider = ({ children }) => {
       setGameover(true)
     }
   }
+
+  const newGame = () => {
+    keyone.forEach((val) => (val.color = "#d8d8d8"))
+    keytwo.forEach((val) => (val.color = "#d8d8d8"))
+    keythree.forEach((val) => (val.color = "#d8d8d8"))
+    setBoard(null)
+    setWord(null)
+    setIndex(null)
+    setKey1(null)
+    setKey2(null)
+    setKey3(null)
+    setGameover(false)
+    setPlayagain(false)
+  }
+
+  const handlekeypress = useCallback((e) => {
+    if (e.key === "Enter") handleEnter()
+    else if (e.key === "Backspace") handleDel()
+    else if (e.key >= "a" && e.key <= "z") clickedletter(e.key.toUpperCase())
+  })
+
   const colorkeys = (guess) => {
     for (let i = 0; i < guess.length; i++) {
       const uppercase = guess[i].toUpperCase()
@@ -178,14 +203,49 @@ const AppProvider = ({ children }) => {
     if (Word) return
     localStorage.setItem("word", wordbank[randomnum])
     setWord(localStorage.getItem("word"))
-  }, [])
+  }, [Word])
 
   useEffect(() => {
     if (Board) return
     localStorage.setItem("board", JSON.stringify(defaultboard))
     setBoard(JSON.parse(localStorage.getItem("board")))
+  }, [Board])
+
+  useEffect(() => {
+    if (Index) return
+    localStorage.setItem("index", JSON.stringify({ row: 0, column: -1 }))
+    setIndex(JSON.parse(localStorage.getItem("index")))
+  }, [Index])
+
+  useEffect(() => {
+    if (Key1 && Key2 && Key3) return
+    localStorage.setItem("keyone", JSON.stringify(keyone))
+    localStorage.setItem("keytwo", JSON.stringify(keytwo))
+    localStorage.setItem("keythree", JSON.stringify(keythree))
+    setKey1(JSON.parse(localStorage.getItem("keyone")))
+    setKey2(JSON.parse(localStorage.getItem("keytwo")))
+    setKey3(JSON.parse(localStorage.getItem("keythree")))
+  }, [Key1, Key2, Key3])
+
+  useEffect(() => {
+    if (row) {
+      console.log("beak")
+      if (row > 0 && row <= 6) {
+        let check = ""
+        Board[row - 1].forEach((val) => (check += val.letter.toLowerCase()))
+        if (check === Word) {
+          newGame()
+        } else if (row === 6 && check !== Word) {
+          newGame()
+        }
+      }
+    }
   }, [])
 
+  useEffect(() => {
+    window.addEventListener("keyup", handlekeypress)
+    return () => window.removeEventListener("keyup", handlekeypress)
+  }, [handlekeypress])
   return (
     <AppContext.Provider
       value={{
@@ -199,7 +259,8 @@ const AppProvider = ({ children }) => {
         Result,
         clickedletter,
         handleEnter,
-        handleDel
+        handleDel,
+        newGame
       }}>
       {children}
     </AppContext.Provider>

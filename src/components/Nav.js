@@ -1,7 +1,6 @@
 import React from "react"
 import HelpIcon from "@mui/icons-material/Help"
 import EqualizerIcon from "@mui/icons-material/Equalizer"
-import "./Nav.css"
 
 const Nav = () => {
   return (
