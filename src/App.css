@@ -26,7 +26,7 @@
 .game {
   width: 90%;
   margin: auto;
-  margin-top: 50px;
+  margin-top: 55px;
 }
 .invalid {
   width: 40%;
@@ -170,6 +170,36 @@ div > h2 {
 .cancel {
   margin-left: 90%;
   margin-top: 5px;
+}
+.howtoplay {
+  width: 40%;
+  margin: auto;
+}
+.example {
+  display: grid;
+  grid-template-columns: repeat(5, 50px);
+  grid-gap: 10px;
+}
+.block {
+  border: 1px solid black;
+  height: 45px;
+  text-align: center;
+}
+.block > p {
+  margin-top: 11px;
+  font-size: 21px;
+}
+.green {
+  background-color: green;
+  color: white;
+}
+.grey {
+  background-color: grey;
+  color: white;
+}
+.yellow {
+  background-color: yellow;
+  color: white;
 }
 @media (min-width: 900px) {
   .nav {

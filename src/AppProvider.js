@@ -4,10 +4,16 @@ import { defaultboard } from "./defaultboard"
 import { keyone, keytwo, keythree } from "./defaultkeys"
 
 const loadJSON = (key) => key && JSON.parse(localStorage.getItem(key))
+
 const setJSON = (key, value) => localStorage.setItem(key, JSON.stringify(value))
+
 export const AppContext = createContext()
 const wordset = new Set(wordbank)
 
+/*Approvider sets and modifies the apps state. state is passed to child
+  components through the context api,local storage is used to store game data 
+  so statistics and game state remain consistent through rerenders
+ */
 const AppProvider = ({ children }) => {
   const [Word, setWord] = useState(localStorage.getItem("word"))
   const [Board, setBoard] = useState(loadJSON("board"))
@@ -26,16 +32,26 @@ const AppProvider = ({ children }) => {
   const [Current, setCurrent] = useState(loadJSON("current"))
   const [Maxstreak, setMaxstreak] = useState(loadJSON("maxstreak"))
   const [Guess, setGuess] = useState(loadJSON("guess"))
+  const [Howtoplay, setHowtoplay] = useState(false)
 
   let row, column
   if (Index) ({ row, column } = Index)
   console.log(row)
 
+  //function to toggle statistics visiblity
   const handleVisible = (val) => {
     setVisible(val)
   }
+
+  //function to toggle the visibility of game instructions
+  const showHelp = (val) => {
+    setHowtoplay(val)
+  }
+
+  /*function to process keyboard letter events 
+  updates letter property in board array with clicked letter*/
   const clickedletter = (letter) => {
-    if (!Gameover && !Visible) {
+    if (!Gameover && !Visible && !Howtoplay) {
       if (row <= 5 && column < 4) {
         Board[row][column + 1].letter = letter
         setIndex({ row, column: column + 1 })
@@ -44,8 +60,11 @@ const AppProvider = ({ children }) => {
     }
   }
 
+  /* function handles enter event,checks if a valid word is guessed
+  by calling checkguess function. if guess is valid it changes state appropriately 
+  else it sets invalid word to true*/
   const handleEnter = async () => {
-    if (!Gameover && !Visible) {
+    if (!Gameover && !Visible && !Howtoplay) {
       if (row < 6 && column < 4) {
         setInvalidword(true)
         setTimeout(() => setInvalidword(false), 1500)
@@ -76,8 +95,9 @@ const AppProvider = ({ children }) => {
     }
   }
 
+  //handles deletion of letters
   const handleDel = () => {
-    if (!Gameover && !Visible) {
+    if (!Gameover && !Visible && !Howtoplay) {
       if (row <= 5 && column >= 0) {
         Board[row][column].letter = ""
         setIndex({ row, column: column - 1 })
@@ -112,20 +132,21 @@ const AppProvider = ({ children }) => {
     setBoard(loadJSON("board"))
   }
 
+  //checks if user guessed the correct word
   const endGame = (guess) => {
     if (guess === Word || row >= 5) {
       let newwin = Wins
       if (guess === Word) {
         setResult(true)
         Guess[row] += 1
-        console.log(Guess)
+        newwin = Wins + 1
         setJSON("guess", Guess)
         setGuess(loadJSON("guess"))
-        newwin = Wins + 1
         setJSON("wins", Wins + 1)
         setWins(loadJSON("wins"))
         localStorage.setItem("current", JSON.stringify(Current + 1))
         setCurrent(loadJSON("current"))
+
         if (loadJSON("current") > Maxstreak) {
           setJSON("maxstreak", loadJSON("current"))
           setMaxstreak(loadJSON("maxstreak"))
@@ -134,9 +155,10 @@ const AppProvider = ({ children }) => {
         setJSON("current", 0)
         setCurrent(loadJSON("current"))
       }
+
+      let newplayed = Played + 1
       setPlayagain(true)
       setGameover(true)
-      let newplayed = Played + 1
       setJSON("played", Played + 1)
       setPlayed(loadJSON("played"))
       setJSON("winpercent", ((newwin / newplayed) * 100).toFixed(0))
@@ -144,6 +166,7 @@ const AppProvider = ({ children }) => {
     }
   }
 
+  //resets the app for a new game
   const newGame = () => {
     keyone.forEach((val) => (val.color = "#d8d8d8"))
     keytwo.forEach((val) => (val.color = "#d8d8d8"))
@@ -164,9 +187,12 @@ const AppProvider = ({ children }) => {
     else if (e.key >= "a" && e.key <= "z") clickedletter(e.key.toUpperCase())
   }
 
+  /*function colors the keys appropriately by modifying the board and keys
+  array*/
   const colorkeys = (guess) => {
     for (let i = 0; i < guess.length; i++) {
       const uppercase = guess[i].toUpperCase()
+
       if (guess[i] === Word[i] || Word.includes(guess[i])) {
         let found = false
         const correctindex = guess[i] === Word[i]
@@ -178,6 +204,7 @@ const AppProvider = ({ children }) => {
             found = true
             break
           }
+
           if (!found) {
             for (let j = 0; j < Key2.length; j++) {
               if (Key2[j].letter === uppercase) {
@@ -189,6 +216,7 @@ const AppProvider = ({ children }) => {
               }
             }
           }
+
           if (!found) {
             for (let j = 0; j < Key3.length; j++) {
               if (Key3[j].letter === uppercase) {
@@ -209,6 +237,7 @@ const AppProvider = ({ children }) => {
             break
           }
         }
+
         if (!found) {
           for (let j = 0; j < Key2.length; j++) {
             if (Key2[j].letter === uppercase) {
@@ -218,6 +247,7 @@ const AppProvider = ({ children }) => {
             }
           }
         }
+
         if (!found) {
           for (let j = 0; j < Key3.length; j++) {
             if (Key3[j].letter === uppercase) {
@@ -310,16 +340,18 @@ const AppProvider = ({ children }) => {
         Result,
         Winpercent,
         Visible,
-        handleVisible,
+        Howtoplay,
         Current,
         Maxstreak,
         Played,
         Guess,
+        handleVisible,
         clickedletter,
         handleEnter,
         handleDel,
         newGame,
-        handleVisible
+        handleVisible,
+        showHelp
       }}>
       {children}
     </AppContext.Provider>

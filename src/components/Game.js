@@ -4,6 +4,7 @@ import Key from "./Key"
 import { AppContext } from "../AppProvider"
 import CancelIcon from "@mui/icons-material/Cancel"
 
+//component renders appopriate game data like states grid and keyboard
 const Game = () => {
   const {
     Word,
@@ -25,6 +26,7 @@ const Game = () => {
   } = useContext(AppContext)
 
   let isvisible = Visible ? "visible" : "hidden"
+
   return (
     <>
       <div className="game">
@@ -35,6 +37,7 @@ const Game = () => {
               return <Row key={i} item={item} row={i} />
             })}
         </div>
+
         {Playagain && (
           <div className="playagain">
             {Result ? <p>yay!! you guessed the word</p> : <p>the word is {Word}</p>}
@@ -43,10 +46,10 @@ const Game = () => {
             </button>
           </div>
         )}
+
         <div className="keyboard">
           <div className="key1">{Key1 && Key1.map((item, i) => <Key key={i} item={item} />)}</div>
           <div className="key2">{Key2 && Key2.map((item, i) => <Key key={i} item={item} />)}</div>
-
           <div className="key3">
             <Enter />
             {Key3 && Key3.map((item, i) => <Key key={i} item={item} />)}
@@ -95,6 +98,7 @@ const Enter = () => {
     </div>
   )
 }
+
 const Del = () => {
   const { handleDel } = useContext(AppContext)
   return (
@@ -111,6 +115,7 @@ const Guesses = ({ val, num }) => {
   if (val) {
     barwidth = (val / total).toFixed(1) * 100
   }
+
   return (
     <div className="rowlabel">
       <div className="id">{num + 1}</div>
@@ -120,4 +125,5 @@ const Guesses = ({ val, num }) => {
     </div>
   )
 }
+
 export default Game

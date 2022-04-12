@@ -4,10 +4,11 @@ import EqualizerIcon from "@mui/icons-material/Equalizer"
 import { AppContext } from "../AppProvider"
 
 const Nav = () => {
-  const { handleVisible } = useContext(AppContext)
+  const { handleVisible, showHelp } = useContext(AppContext)
+
   return (
     <div className="nav">
-      <div className="help">
+      <div className="help" onClick={() => showHelp(true)}>
         <HelpIcon />
       </div>
       <div className="wordle-container">
@@ -19,4 +20,5 @@ const Nav = () => {
     </div>
   )
 }
+
 export default Nav

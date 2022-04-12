@@ -4,6 +4,7 @@ import { AppContext } from "../AppProvider"
 const Key = ({ item }) => {
   const { clickedletter } = useContext(AppContext)
   const fgcolor = item.color === "#d8d8d8"
+
   return (
     <div
       className="keys"
@@ -15,4 +16,5 @@ const Key = ({ item }) => {
     </div>
   )
 }
+
 export default Key

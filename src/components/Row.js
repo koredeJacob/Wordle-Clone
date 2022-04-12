@@ -10,4 +10,5 @@ const Row = ({ item, row }) => {
     </div>
   )
 }
+
 export default Row
