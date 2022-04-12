@@ -36,7 +36,6 @@ const AppProvider = ({ children }) => {
 
   let row, column
   if (Index) ({ row, column } = Index)
-  console.log(row)
 
   //function to toggle statistics visiblity
   const handleVisible = (val) => {
@@ -261,7 +260,6 @@ const AppProvider = ({ children }) => {
   }
 
   const randomnum = Math.floor(Math.random() * wordbank.length)
-  console.log(Word, Board)
 
   useEffect(() => {
     if (Word) return
@@ -293,7 +291,6 @@ const AppProvider = ({ children }) => {
 
   useEffect(() => {
     if (row) {
-      console.log("beak")
       if (row > 0 && row <= 6) {
         let check = ""
         Board[row - 1].forEach((val) => (check += val.letter.toLowerCase()))
