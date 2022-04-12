@@ -1314,6 +1314,7 @@ export const wordbank = [
   "sober",
   "boast",
   "tract",
+  "eerie",
   "cigar",
   "trash",
   "spank",

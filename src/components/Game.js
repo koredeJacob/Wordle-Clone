@@ -2,15 +2,33 @@ import React, { useContext } from "react"
 import Row from "./Row"
 import Key from "./Key"
 import { AppContext } from "../AppProvider"
-import { Button } from "@mui/material"
+import CancelIcon from "@mui/icons-material/Cancel"
 
 const Game = () => {
-  const { Word, Board, Key1, Key2, Key3, Result, Invalidword, Playagain, newGame } =
-    useContext(AppContext)
+  const {
+    Word,
+    Board,
+    Key1,
+    Key2,
+    Key3,
+    Played,
+    Winpercent,
+    Maxstreak,
+    Result,
+    Current,
+    Guess,
+    Visible,
+    handleVisible,
+    Invalidword,
+    Playagain,
+    newGame
+  } = useContext(AppContext)
+
+  let isvisible = Visible ? "visible" : "hidden"
   return (
     <>
-      {Invalidword && <div>not in word list</div>}
       <div className="game">
+        {Invalidword && <div className="invalid">not in word list</div>}
         <div className="guess">
           {Board &&
             Board.map((item, i) => {
@@ -18,9 +36,11 @@ const Game = () => {
             })}
         </div>
         {Playagain && (
-          <div>
+          <div className="playagain">
             {Result ? <p>yay!! you guessed the word</p> : <p>the word is {Word}</p>}
-            <button onClick={newGame}>Playagain</button>
+            <button className="playbutton" onClick={newGame}>
+              Play again
+            </button>
           </div>
         )}
         <div className="keyboard">
@@ -34,34 +54,33 @@ const Game = () => {
           </div>
         </div>
       </div>
-      <div className="stats">
-        <h5>STATISTICS</h5>
+
+      <div className="stats" style={{ visibility: isvisible }}>
+        <div className="cancel" onClick={() => handleVisible(false)}>
+          <CancelIcon />
+        </div>
+        <h3 className="statsheader">STATISTICS</h3>
         <div className="statistics">
-          <div>
-            <h3>0</h3>
-            <p>Played</p>
+          <div className="played">
+            <h2 className="played-figure">{Played}</h2>
+            <p className="played-label">Played</p>
           </div>
-          <div>
-            <h3>0</h3>
-            <p>Win %</p>
+          <div className="winpercent">
+            <h2 className="win-figure">{Winpercent}</h2>
+            <p className="win-percent">Win %</p>
           </div>
-          <div>
-            <h3>0</h3>
-            <p>Current Streak</p>
+          <div className="current">
+            <h2 className="current-figure">{Current}</h2>
+            <p className="current-label">Current Streak</p>
           </div>
-          <div>
-            <h3>0</h3>
-            <p>Max Streak</p>
+          <div className="maxstreak">
+            <h2 className="max-figurw">{Maxstreak}</h2>
+            <p className="max-label">Max Streak</p>
           </div>
         </div>
-        <h5>GUESS DISTRIBUTION</h5>
+        <h3 className="guesses">GUESS DISTRIBUTION</h3>
         <div className="guess-distribution">
-          <div>1</div>
-          <div>2</div>
-          <div>3</div>
-          <div>4</div>
-          <div>5</div>
-          <div>6</div>
+          {Guess && Guess.map((item, i) => <Guesses key={i} val={item} num={i} />)}
         </div>
       </div>
     </>
@@ -81,6 +100,23 @@ const Del = () => {
   return (
     <div className="del" onClick={handleDel}>
       <p>DEL</p>
+    </div>
+  )
+}
+
+const Guesses = ({ val, num }) => {
+  const { Guess } = useContext(AppContext)
+  let total = Guess.reduce((tot, current) => (tot += current), 0)
+  let barwidth = 5
+  if (val) {
+    barwidth = (val / total).toFixed(1) * 100
+  }
+  return (
+    <div className="rowlabel">
+      <div className="id">{num + 1}</div>
+      <div className="bar" style={{ width: `${barwidth}%`, border: "1px solid black" }}>
+        {val}
+      </div>
     </div>
   )
 }

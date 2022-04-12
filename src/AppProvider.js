@@ -1,10 +1,10 @@
-import React, { createContext, useCallback, useEffect, useState } from "react"
+import React, { createContext, useEffect, useState } from "react"
 import { wordbank } from "./words"
 import { defaultboard } from "./defaultboard"
 import { keyone, keytwo, keythree } from "./defaultkeys"
-import { elementAcceptingRef } from "@mui/utils"
 
 const loadJSON = (key) => key && JSON.parse(localStorage.getItem(key))
+const setJSON = (key, value) => localStorage.setItem(key, JSON.stringify(value))
 export const AppContext = createContext()
 const wordset = new Set(wordbank)
 
@@ -16,14 +16,26 @@ const AppProvider = ({ children }) => {
   const [Gameover, setGameover] = useState(false)
   const [Playagain, setPlayagain] = useState(false)
   const [Result, setResult] = useState(false)
+  const [Visible, setVisible] = useState(false)
   const [Key1, setKey1] = useState(loadJSON("keyone"))
   const [Key2, setKey2] = useState(loadJSON("keytwo"))
   const [Key3, setKey3] = useState(loadJSON("keythree"))
+  const [Played, setPlayed] = useState(loadJSON("played"))
+  const [Winpercent, setWinpercent] = useState(loadJSON("winpercent"))
+  const [Wins, setWins] = useState(loadJSON("wins"))
+  const [Current, setCurrent] = useState(loadJSON("current"))
+  const [Maxstreak, setMaxstreak] = useState(loadJSON("maxstreak"))
+  const [Guess, setGuess] = useState(loadJSON("guess"))
+
   let row, column
   if (Index) ({ row, column } = Index)
   console.log(row)
+
+  const handleVisible = (val) => {
+    setVisible(val)
+  }
   const clickedletter = (letter) => {
-    if (!Gameover) {
+    if (!Gameover && !Visible) {
       if (row <= 5 && column < 4) {
         Board[row][column + 1].letter = letter
         setIndex({ row, column: column + 1 })
@@ -33,7 +45,7 @@ const AppProvider = ({ children }) => {
   }
 
   const handleEnter = async () => {
-    if (!Gameover) {
+    if (!Gameover && !Visible) {
       if (row < 6 && column < 4) {
         setInvalidword(true)
         setTimeout(() => setInvalidword(false), 1500)
@@ -46,16 +58,16 @@ const AppProvider = ({ children }) => {
           await checkGuess(Board[row])
           colorkeys(guess)
           endGame(guess)
-          localStorage.setItem("index", JSON.stringify({ row: row + 1, column: -1 }))
-          setIndex(JSON.parse(localStorage.getItem("index")))
-          localStorage.setItem("board", JSON.stringify(Board))
-          setBoard(JSON.parse(localStorage.getItem("board")))
-          localStorage.setItem("keyone", JSON.stringify(Key1))
-          localStorage.setItem("keytwo", JSON.stringify(Key2))
-          localStorage.setItem("keythree", JSON.stringify(Key3))
-          setKey1(JSON.parse(localStorage.getItem("keyone")))
-          setKey2(JSON.parse(localStorage.getItem("keytwo")))
-          setKey3(JSON.parse(localStorage.getItem("keythree")))
+          setJSON("index", { row: row + 1, column: -1 })
+          setJSON("keyone", Key1)
+          setJSON("keytwo", Key2)
+          setJSON("keythree", Key3)
+          setJSON("board", Board)
+          setBoard(loadJSON("board"))
+          setIndex(loadJSON("index"))
+          setKey1(loadJSON("keyone"))
+          setKey2(loadJSON("keytwo"))
+          setKey3(loadJSON("keythree"))
         } else {
           setInvalidword(true)
           setTimeout(() => setInvalidword(false), 1500)
@@ -65,7 +77,7 @@ const AppProvider = ({ children }) => {
   }
 
   const handleDel = () => {
-    if (!Gameover) {
+    if (!Gameover && !Visible) {
       if (row <= 5 && column >= 0) {
         Board[row][column].letter = ""
         setIndex({ row, column: column - 1 })
@@ -77,13 +89,13 @@ const AppProvider = ({ children }) => {
   const checkGuess = (arr) =>
     new Promise((resolve) => {
       validGuess(arr)
-      setTimeout(resolve, 2500)
+      setTimeout(resolve, 1500)
     })
 
   const validGuess = (arr) => {
     let time = 0
     arr.forEach((element, index) => {
-      setTimeout(() => color(element, index), (time += 500))
+      setTimeout(() => color(element, index), (time += 300))
     })
   }
 
@@ -96,17 +108,39 @@ const AppProvider = ({ children }) => {
     } else {
       element.color = "grey"
     }
-    localStorage.setItem("board", JSON.stringify(Board))
-    setBoard(JSON.parse(localStorage.getItem("board")))
+    setJSON("board", Board)
+    setBoard(loadJSON("board"))
   }
 
   const endGame = (guess) => {
     if (guess === Word || row >= 5) {
+      let newwin = Wins
       if (guess === Word) {
         setResult(true)
+        Guess[row] += 1
+        console.log(Guess)
+        setJSON("guess", Guess)
+        setGuess(loadJSON("guess"))
+        newwin = Wins + 1
+        setJSON("wins", Wins + 1)
+        setWins(loadJSON("wins"))
+        localStorage.setItem("current", JSON.stringify(Current + 1))
+        setCurrent(loadJSON("current"))
+        if (loadJSON("current") > Maxstreak) {
+          setJSON("maxstreak", loadJSON("current"))
+          setMaxstreak(loadJSON("maxstreak"))
+        }
+      } else if (row >= 5) {
+        setJSON("current", 0)
+        setCurrent(loadJSON("current"))
       }
       setPlayagain(true)
       setGameover(true)
+      let newplayed = Played + 1
+      setJSON("played", Played + 1)
+      setPlayed(loadJSON("played"))
+      setJSON("winpercent", ((newwin / newplayed) * 100).toFixed(0))
+      setWinpercent(loadJSON("winpercent"))
     }
   }
 
@@ -124,11 +158,11 @@ const AppProvider = ({ children }) => {
     setPlayagain(false)
   }
 
-  const handlekeypress = useCallback((e) => {
+  const handlekeypress = (e) => {
     if (e.key === "Enter") handleEnter()
     else if (e.key === "Backspace") handleDel()
     else if (e.key >= "a" && e.key <= "z") clickedletter(e.key.toUpperCase())
-  })
+  }
 
   const colorkeys = (guess) => {
     for (let i = 0; i < guess.length; i++) {
@@ -207,24 +241,24 @@ const AppProvider = ({ children }) => {
 
   useEffect(() => {
     if (Board) return
-    localStorage.setItem("board", JSON.stringify(defaultboard))
-    setBoard(JSON.parse(localStorage.getItem("board")))
+    setJSON("board", defaultboard)
+    setBoard(loadJSON("board"))
   }, [Board])
 
   useEffect(() => {
     if (Index) return
-    localStorage.setItem("index", JSON.stringify({ row: 0, column: -1 }))
-    setIndex(JSON.parse(localStorage.getItem("index")))
+    setJSON("index", { row: 0, column: -1 })
+    setIndex(loadJSON("index"))
   }, [Index])
 
   useEffect(() => {
     if (Key1 && Key2 && Key3) return
-    localStorage.setItem("keyone", JSON.stringify(keyone))
-    localStorage.setItem("keytwo", JSON.stringify(keytwo))
-    localStorage.setItem("keythree", JSON.stringify(keythree))
-    setKey1(JSON.parse(localStorage.getItem("keyone")))
-    setKey2(JSON.parse(localStorage.getItem("keytwo")))
-    setKey3(JSON.parse(localStorage.getItem("keythree")))
+    setJSON("keyone", keyone)
+    setJSON("keytwo", keytwo)
+    setJSON("keythree", keythree)
+    setKey1(loadJSON("keyone"))
+    setKey2(loadJSON("keytwo"))
+    setKey3(loadJSON("keythree"))
   }, [Key1, Key2, Key3])
 
   useEffect(() => {
@@ -246,6 +280,23 @@ const AppProvider = ({ children }) => {
     window.addEventListener("keyup", handlekeypress)
     return () => window.removeEventListener("keyup", handlekeypress)
   }, [handlekeypress])
+
+  useEffect(() => {
+    if (Played) return
+    setJSON("played", 0)
+    setJSON("current", 0)
+    setJSON("wins", 0)
+    setJSON("winpercentage", 0)
+    setJSON("maxstreak", 0)
+    setJSON("guess", [0, 0, 0, 0, 0, 0])
+    setGuess(loadJSON("guess"))
+    setPlayed(loadJSON("played"))
+    setWinpercent(loadJSON("winpercentage"))
+    setWinpercent(loadJSON("wins"))
+    setCurrent(loadJSON("current"))
+    setMaxstreak(loadJSON("maxstreak"))
+  }, [])
+
   return (
     <AppContext.Provider
       value={{
@@ -257,10 +308,18 @@ const AppProvider = ({ children }) => {
         Invalidword,
         Playagain,
         Result,
+        Winpercent,
+        Visible,
+        handleVisible,
+        Current,
+        Maxstreak,
+        Played,
+        Guess,
         clickedletter,
         handleEnter,
         handleDel,
-        newGame
+        newGame,
+        handleVisible
       }}>
       {children}
     </AppContext.Provider>
