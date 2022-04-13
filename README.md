@@ -7,3 +7,7 @@ this project is a clone of the popular guessing game wordle. this version allows
 - React
 - Context api
 - css
+
+## App
+
+- [app] (https://kwordle-clone.netlifly.app/)

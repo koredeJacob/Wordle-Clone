@@ -36,7 +36,7 @@ const AppProvider = ({ children }) => {
 
   let row, column
   if (Index) ({ row, column } = Index)
-
+  console.log(Word)
   //function to toggle statistics visiblity
   const handleVisible = (val) => {
     setVisible(val)
@@ -113,17 +113,49 @@ const AppProvider = ({ children }) => {
 
   const validGuess = (arr) => {
     let time = 0
+    const wordobj = {}
+    const guessobj = {}
+    for (let i = 0; i < Word.length; i++) {
+      if (wordobj[Word[i]]) wordobj[Word[i]] += 1
+      else wordobj[Word[i]] = 1
+    }
+    let guessed = ""
+    arr.forEach((val) => {
+      guessed += val.letter.toLowerCase()
+    })
+    for (let i = 0; i < guessed.length; i++) {
+      if (guessobj[guessed[i]]) guessobj[guessed[i]] += 1
+      else guessobj[guessed[i]] = 1
+    }
+    console.log(wordobj, guessobj)
     arr.forEach((element, index) => {
-      setTimeout(() => color(element, index), (time += 300))
+      setTimeout(() => color(element, index, guessobj, wordobj), (time += 300))
     })
   }
 
-  const color = (element, index) => {
+  const color = (element, index, guessobj, wordobj) => {
     const character = element.letter.toLowerCase()
     if (character === Word[index]) {
+      wordobj[character] -= 1
+      guessobj[character] -= 1
       element.color = "green"
     } else if (character !== Word[index] && Word.includes(character)) {
-      element.color = "yellow"
+      if (wordobj[character] === 0) {
+        element.color = "grey"
+      } else if (wordobj[character]) {
+        if (wordobj[character] < guessobj[character]) {
+          element.color = "grey"
+          guessobj[character] -= 1
+        } else if (wordobj[character] > guessobj[character]) {
+          element.color = "gold"
+          guessobj[character] -= 1
+          wordobj[character] -= 1
+        } else {
+          element.color = "gold"
+          guessobj[character] -= 1
+          wordobj[character] -= 1
+        }
+      }
     } else {
       element.color = "grey"
     }
@@ -151,6 +183,7 @@ const AppProvider = ({ children }) => {
           setMaxstreak(loadJSON("maxstreak"))
         }
       } else if (row >= 5) {
+        setResult(false)
         setJSON("current", 0)
         setCurrent(loadJSON("current"))
       }
@@ -198,7 +231,7 @@ const AppProvider = ({ children }) => {
         for (let j = 0; j < Key1.length; j++) {
           if (Key1[j].letter === uppercase) {
             if (Key1[j].color !== "green") {
-              Key1[j].color = correctindex ? "green" : "yellow"
+              Key1[j].color = correctindex ? "green" : "gold"
             }
             found = true
             break
@@ -208,7 +241,7 @@ const AppProvider = ({ children }) => {
             for (let j = 0; j < Key2.length; j++) {
               if (Key2[j].letter === uppercase) {
                 if (Key2[j].color !== "green") {
-                  Key2[j].color = correctindex ? "green" : "yellow"
+                  Key2[j].color = correctindex ? "green" : "gold"
                 }
                 found = true
                 break
@@ -220,7 +253,7 @@ const AppProvider = ({ children }) => {
             for (let j = 0; j < Key3.length; j++) {
               if (Key3[j].letter === uppercase) {
                 if (Key3[j].color !== "green") {
-                  Key3[j].color = correctindex ? "green" : "yellow"
+                  Key3[j].color = correctindex ? "green" : "gold"
                 }
                 break
               }

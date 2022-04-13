@@ -26,7 +26,7 @@
 .game {
   width: 90%;
   margin: auto;
-  margin-top: 55px;
+  margin-top: 60px;
 }
 .invalid {
   width: 40%;
@@ -43,7 +43,7 @@
   grid-gap: 5px;
   justify-content: center;
   margin: auto;
-  margin-bottom: 60px;
+  margin-bottom: 50px;
 }
 .guess-row {
   display: grid;
@@ -124,7 +124,7 @@
   background-color: white;
   width: 80%;
   margin: auto;
-  position: fixed;
+  position: absolute;
   z-index: 2;
   top: 150px;
   left: 10%;
@@ -198,7 +198,7 @@ div > h2 {
   color: white;
 }
 .yellow {
-  background-color: yellow;
+  background-color: gold;
   color: white;
 }
 @media (min-width: 900px) {

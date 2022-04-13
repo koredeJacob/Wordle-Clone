@@ -111,15 +111,15 @@ const Del = () => {
 const Guesses = ({ val, num }) => {
   const { Guess } = useContext(AppContext)
   let total = Guess.reduce((tot, current) => (tot += current), 0)
-  let barwidth = 5
+  let barwidth = 2
   if (val) {
-    barwidth = (val / total).toFixed(1) * 100
+    barwidth = (val / total).toFixed(1) * 97
   }
 
   return (
     <div className="rowlabel">
       <div className="id">{num + 1}</div>
-      <div className="bar" style={{ width: `${barwidth}%`, border: "1px solid black" }}>
+      <div className="bar" style={{ width: `${barwidth + 3}%`, border: "1px solid black" }}>
         {val}
       </div>
     </div>

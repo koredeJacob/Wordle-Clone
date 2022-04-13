@@ -1,6 +1,6 @@
 import React from "react"
 
-const Column = ({ letter, col, color }) => {
+const Column = ({ letter, color }) => {
   const fgcolor = color === "white" ? "black" : "white"
 
   return (
