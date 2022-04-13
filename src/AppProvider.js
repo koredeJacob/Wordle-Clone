@@ -36,7 +36,6 @@ const AppProvider = ({ children }) => {
 
   let row, column
   if (Index) ({ row, column } = Index)
-  console.log(Word)
   //function to toggle statistics visiblity
   const handleVisible = (val) => {
     setVisible(val)
@@ -127,7 +126,6 @@ const AppProvider = ({ children }) => {
       if (guessobj[guessed[i]]) guessobj[guessed[i]] += 1
       else guessobj[guessed[i]] = 1
     }
-    console.log(wordobj, guessobj)
     arr.forEach((element, index) => {
       setTimeout(() => color(element, index, guessobj, wordobj), (time += 300))
     })

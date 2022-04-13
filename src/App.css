@@ -178,7 +178,7 @@ div > h2 {
 .example {
   display: grid;
   grid-template-columns: repeat(5, 50px);
-  grid-gap: 10px;
+  grid-gap: 5px;
 }
 .block {
   border: 1px solid black;
