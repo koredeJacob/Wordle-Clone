@@ -8,6 +8,6 @@ this project is a clone of the popular guessing game [wordle](https://www.nytime
 - Context api
 - css
 
-## App
+## App Link
 
-[app](https://kwordle-clone.netlify.app)
+[https://kwordle-clone.netlify.app](https://kwordle-clone.netlify.app)
